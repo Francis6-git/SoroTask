@@ -1,11 +1,13 @@
-require('dotenv').config();
-const { Server, Keypair } = require('soroban-client');
+const config = require('./src/config');
+const { server } = require('./src/rpc');
+const { Keypair } = require('@stellar/stellar-sdk');
+const { initializeKeeperAccount } = require('./src/account');
 const ExecutionQueue = require('./src/queue');
 
 async function main() {
     console.log("Starting SoroTask Keeper...");
-
-    const { initializeKeeperAccount } = require('./src/account');
+    console.log(`Configured for network: ${config.networkPassphrase}`);
+    console.log(`RPC URL: ${config.rpcUrl}`);
 
     let keeperData;
     try {
@@ -16,31 +18,21 @@ async function main() {
     }
 
     const { keypair, accountResponse } = keeperData;
-
-
     const queue = new ExecutionQueue();
 
-    queue.on('task:started', (taskId) => console.log(`Started execution for task ${taskId}`));
-    queue.on('task:success', (taskId) => console.log(`Task ${taskId} executed successfully`));
-    queue.on('task:failed', (taskId, err) => console.error(`Task ${taskId} failed:`, err.message));
-    queue.on('cycle:complete', (stats) => console.log(`Cycle complete: ${JSON.stringify(stats)}`));
+    try {
+        // Connection validation / Startup health check
+        const networkInfo = await server.getNetwork();
+        console.log("Successfully connected to Soroban RPC!");
+        console.log("Network Passphrase from RPC:", networkInfo.passphrase);
 
-    // Dummy executor function for now
-    const dummyExecutor = async (taskId) => {
-        return new Promise((resolve) => setTimeout(resolve, 500));
-    };
-
-    // Graceful shutdown handling
-    const shutdown = async (signal) => {
-        console.log(`\nReceived ${signal}. Starting graceful shutdown...`);
-        clearInterval(pollingInterval);
-        await queue.drain();
-        console.log("Graceful shutdown complete. Exiting.");
-        process.exit(0);
-    };
-
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
+        if (networkInfo.passphrase !== config.networkPassphrase) {
+            throw new Error(`Network passphrase mismatch! Expected: ${config.networkPassphrase}, Got: ${networkInfo.passphrase}`);
+        }
+    } catch (err) {
+        console.error("Failed to connect to Soroban RPC or network mismatch:", err.message);
+        process.exit(1);
+    }
 
     // Polling loop
     const pollingInterval = setInterval(async () => {
@@ -51,9 +43,11 @@ async function main() {
         // const dueTaskIds = await getDueTasks();
         // await queue.enqueue(dueTaskIds, dummyExecutor);
 
-    }, 10000);
+    }, config.pollingIntervalMs);
 }
 
 main().catch(err => {
-    console.error("Keeper failed:", err);
+    console.error("Keeper initialization failed:", err);
+    process.exit(1);
 });
+

@@ -150,17 +150,45 @@ impl SoroTaskContract {
         };
 
         if should_execute {
-            // ── Cross-contract call ──────────────────────────────────────────
-            // `args` is Vec<Val> as stored in TaskConfig — passed directly.
-            // The return value is discarded; callers can read target state
-            // independently if needed.
+            // ── Fee validation & calculation (MVP: fixed fee) ──────────────
+            // For MVP use a fixed fee per execution. Ensure the task has
+            // sufficient gas_balance before attempting execution.
+            let fee: i128 = 100; // fixed fee units (token smallest unit)
+            if config.gas_balance < fee {
+                panic_with_error!(&env, Error::InsufficientBalance);
+            }
+
+            // ── Cross-contract call ──────────────────────────────────────
             env.invoke_contract::<Val>(&config.target, &config.function, config.args.clone());
 
-            // ── State update ────────────────────────────────────────────────
-            // Reached only when invoke_contract returned without panic.
-            // Record the ledger timestamp of this successful execution.
+            // ── Payment to keeper & balance deduction ────────────────────
+            // Decrease the stored gas_balance regardless, and if a token has
+            // been initialized attempt to transfer the fee from this
+            // contract to the keeper.
+            config.gas_balance -= fee;
+
+            // If token initialized, perform an on-chain token transfer. If
+            // not initialized we still deduct the accounting balance so the
+            // task reflects consumed gas for off-chain tracking.
+            if env.storage().instance().has(&DataKey::Token) {
+                let token_address: Address = env
+                    .storage()
+                    .instance()
+                    .get(&DataKey::Token)
+                    .expect("Not initialized");
+                let token_client = soroban_sdk::token::Client::new(&env, &token_address);
+                token_client.transfer(&env.current_contract_address(), &keeper, &fee);
+            }
+
+            // ── State update ────────────────────────────────────────────
             config.last_run = env.ledger().timestamp();
             env.storage().persistent().set(&task_key, &config);
+
+            // Emit keeper paid event
+            env.events().publish(
+                (Symbol::new(&env, "KeeperPaid"), task_id),
+                (keeper, fee),
+            );
         }
     }
 

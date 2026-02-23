@@ -1,14 +1,18 @@
 {
   "name": "keeper",
   "version": "1.0.0",
-  "description": "SoroTask Keeper Bot",
-  "type": "module",
+  "description": "SoroTask Keeper - Production-grade task execution service for Soroban smart contracts",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "echo \"No linting configured\""
   },
+  "keywords": ["soroban", "stellar", "keeper", "automation", "smart-contracts"],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "dotenv": "^17.3.1",
     "@stellar/stellar-sdk": "^14.5.0",

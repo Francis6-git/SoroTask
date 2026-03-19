@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/99</span>
+                <span class='fraction'>0/93</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>0/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/90</span>
+                <span class='fraction'>0/86</span>
             </div>
         
             
@@ -232,17 +232,11 @@
 <a name='L167'></a><a href='#L167'>167</a>
 <a name='L168'></a><a href='#L168'>168</a>
 <a name='L169'></a><a href='#L169'>169</a>
-<a name='L170'></a><a href='#L170'>170</a>
-<a name='L171'></a><a href='#L171'>171</a>
-<a name='L172'></a><a href='#L172'>172</a>
-<a name='L173'></a><a href='#L173'>173</a>
-<a name='L174'></a><a href='#L174'>174</a>
-<a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a>
-<a name='L177'></a><a href='#L177'>177</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L170'></a><a href='#L170'>170</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -341,19 +335,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -361,6 +344,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -423,6 +409,7 @@ const { loadConfig } = <span class="cstat-no" title="statement not covered" >req
 const { initializeKeeperAccount } = <span class="cstat-no" title="statement not covered" >require('./src/account');</span>
 const { ExecutionQueue } = <span class="cstat-no" title="statement not covered" >require('./src/queue');</span>
 const TaskPoller = <span class="cstat-no" title="statement not covered" >require('./src/poller');</span>
+const TaskRegistry = <span class="cstat-no" title="statement not covered" >require('./src/registry');</span>
 &nbsp;
 async function <span class="fstat-no" title="function not covered" >main(</span>) {
 <span class="cstat-no" title="statement not covered" >    console.log("Starting SoroTask Keeper...");</span>
@@ -514,22 +501,11 @@ async function <span class="fstat-no" title="function not covered" >main(</span>
         }
     };
 &nbsp;
-    // Get task registry - in production, this would query the contract for all registered task IDs
-    const getTaskRegistry = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
-        // Option 1: Use environment variable for known task IDs
-<span class="cstat-no" title="statement not covered" >        if (process.env.TASK_IDS) {</span>
-<span class="cstat-no" title="statement not covered" >            return process.env.TASK_IDS.split(',').map(<span class="fstat-no" title="function not covered" >id</span> =&gt; <span class="cstat-no" title="statement not covered" >parseInt(id.trim(), 10))</span>;</span>
-        }
-&nbsp;
-        // Option 2: Default range (can be improved by querying events or contract counter)
-<span class="cstat-no" title="statement not covered" >        try {</span>
-            const maxTaskId = <span class="cstat-no" title="statement not covered" >parseInt(process.env.MAX_TASK_ID || 10, 10);</span>
-<span class="cstat-no" title="statement not covered" >            return Array.from({ length: maxTaskId }, <span class="fstat-no" title="function not covered" >(_</span>, i) =&gt; <span class="cstat-no" title="statement not covered" >i + 1)</span>;</span>
-        } catch (error) {
-<span class="cstat-no" title="statement not covered" >            console.warn('[Registry] Could not determine task range');</span>
-<span class="cstat-no" title="statement not covered" >            return [];</span>
-        }
-    };
+    // Initialize event-driven task registry
+    const registry = <span class="cstat-no" title="statement not covered" >new TaskRegistry(server, config.contractId, {</span>
+        startLedger: parseInt(process.env.START_LEDGER || '0', 10)
+    });
+<span class="cstat-no" title="statement not covered" >    await registry.init();</span>
 &nbsp;
     // Polling loop
     const pollingIntervalMs = <span class="cstat-no" title="statement not covered" >config.pollIntervalMs;</span>
@@ -539,8 +515,11 @@ async function <span class="fstat-no" title="function not covered" >main(</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
 <span class="cstat-no" title="statement not covered" >            console.log('\n[Keeper] ===== Starting new polling cycle =====');</span>
 &nbsp;
+            // Poll for new TaskRegistered events
+<span class="cstat-no" title="statement not covered" >            await registry.poll();</span>
+&nbsp;
             // Get list of all registered task IDs
-            const taskIds = <span class="cstat-no" title="statement not covered" >await getTaskRegistry();</span>
+            const taskIds = <span class="cstat-no" title="statement not covered" >registry.getTaskIds();</span>
 <span class="cstat-no" title="statement not covered" >            console.log(`[Keeper] Checking ${taskIds.length} tasks...`);</span>
 &nbsp;
             // Poll for due tasks
@@ -576,7 +555,7 @@ async function <span class="fstat-no" title="function not covered" >main(</span>
 <span class="cstat-no" title="statement not covered" >    console.log('[Keeper] Running initial poll...');</span>
 <span class="cstat-no" title="statement not covered" >    setTimeout(<span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        try {</span>
-            const taskIds = <span class="cstat-no" title="statement not covered" >await getTaskRegistry();</span>
+            const taskIds = <span class="cstat-no" title="statement not covered" >registry.getTaskIds();</span>
             const dueTaskIds = <span class="cstat-no" title="statement not covered" >await poller.pollDueTasks(taskIds);</span>
 <span class="cstat-no" title="statement not covered" >            if (dueTaskIds.length &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >                await queue.enqueue(dueTaskIds, executeTask);</span>
@@ -598,7 +577,7 @@ async function <span class="fstat-no" title="function not covered" >main(</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-24T01:59:13.800Z
+                at 2026-03-19T10:37:54.678Z
             </div>
         <script src="../prettify.js"></script>
         <script>

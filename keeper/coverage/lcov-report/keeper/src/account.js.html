@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -168,26 +168,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -196,22 +196,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -254,26 +254,26 @@ async function initializeKeeperAccount() {
     }
 &nbsp;
     let keypair;
-    try {
-        keypair = Keypair.fromSecret(secret);
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >        keypair = Keypair.fromSecret(secret);</span>
     } catch (err) {
 <span class="cstat-no" title="statement not covered" >        throw new Error('Failed to derive keypair from KEEPER_SECRET. Ensure it is a valid Stellar secret key.');</span>
     }
 &nbsp;
-    const publicKey = keypair.publicKey();
-    console.log(`Keeper initialized with public key: ${publicKey}`);
+    const publicKey = <span class="cstat-no" title="statement not covered" >keypair.publicKey();</span>
+<span class="cstat-no" title="statement not covered" >    console.log(`Keeper initialized with public key: ${publicKey}`);</span>
 &nbsp;
-    const rpcUrl = process.env.SOROBAN_RPC_URL || 'https://soroban-testnet.stellar.org';
-    const server = new Server(rpcUrl);
+    const rpcUrl = <span class="cstat-no" title="statement not covered" >process.env.SOROBAN_RPC_URL || 'https://soroban-testnet.stellar.org';</span>
+    const server = <span class="cstat-no" title="statement not covered" >new Server(rpcUrl);</span>
 &nbsp;
     let accountResponse;
-    try {
+<span class="cstat-no" title="statement not covered" >    try {</span>
         // Fetch account from network
-        accountResponse = await server.getAccount(publicKey);
+<span class="cstat-no" title="statement not covered" >        accountResponse = await server.getAccount(publicKey);</span>
     } catch (err) {
         // Specific handling for account not found
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (err.response &amp;&amp; err.response.status === 404) {
-            throw new Error(
+<span class="cstat-no" title="statement not covered" >        if (err.response &amp;&amp; err.response.status === 404) {</span>
+<span class="cstat-no" title="statement not covered" >            throw new Error(</span>
                 `Keeper account ${publicKey} not found on-chain. ` +
                 `Please fund this account with at least 1-2 XLM to enable transaction submission.`
             );
@@ -282,22 +282,22 @@ async function initializeKeeperAccount() {
     }
 &nbsp;
     // Validate balance
-    const minBalanceXlm = parseFloat(process.env.MIN_KEEPER_BALANCE_XLM || <span class="branch-1 cbranch-no" title="branch not covered" >'1.0')</span>;
-    const haltOnLowBalance = process.env.HALT_ON_LOW_BALANCE === 'true';
+    const minBalanceXlm = <span class="cstat-no" title="statement not covered" >parseFloat(process.env.MIN_KEEPER_BALANCE_XLM || '1.0');</span>
+    const haltOnLowBalance = <span class="cstat-no" title="statement not covered" >process.env.HALT_ON_LOW_BALANCE === 'true';</span>
 &nbsp;
-    const nativeBalance = accountResponse.balances.find(b =&gt; b.asset_type === 'native');
-    const balanceXlm = nativeBalance ? parseFloat(nativeBalance.balance) : <span class="branch-1 cbranch-no" title="branch not covered" >0;</span>
+    const nativeBalance = <span class="cstat-no" title="statement not covered" >accountResponse.balances.find(<span class="fstat-no" title="function not covered" >b </span>=&gt; <span class="cstat-no" title="statement not covered" >b.asset_type === 'native')</span>;</span>
+    const balanceXlm = <span class="cstat-no" title="statement not covered" >nativeBalance ? parseFloat(nativeBalance.balance) : 0;</span>
 &nbsp;
-    if (balanceXlm &lt; minBalanceXlm) {
-        const warning = `Keeper balance (${balanceXlm} XLM) is below the recommended minimum of ${minBalanceXlm} XLM.`;
-        if (haltOnLowBalance) {
-            throw new Error(`HALTING: ${warning}`);
+<span class="cstat-no" title="statement not covered" >    if (balanceXlm &lt; minBalanceXlm) {</span>
+        const warning = <span class="cstat-no" title="statement not covered" >`Keeper balance (${balanceXlm} XLM) is below the recommended minimum of ${minBalanceXlm} XLM.`;</span>
+<span class="cstat-no" title="statement not covered" >        if (haltOnLowBalance) {</span>
+<span class="cstat-no" title="statement not covered" >            throw new Error(`HALTING: ${warning}`);</span>
         } else {
-            console.warn(`WARNING: ${warning}`);
+<span class="cstat-no" title="statement not covered" >            console.warn(`WARNING: ${warning}`);</span>
         }
     }
 &nbsp;
-    return { keypair, accountResponse };
+<span class="cstat-no" title="statement not covered" >    return { keypair, accountResponse };</span>
 }
 &nbsp;
 /**
@@ -328,7 +328,7 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-24T01:59:13.800Z
+                at 2026-03-19T10:37:54.678Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

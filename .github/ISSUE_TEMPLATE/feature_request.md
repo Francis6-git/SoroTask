@@ -1,34 +1,20 @@
 ---
 name: Feature Request
-about: Suggest a new feature or improvement for SoroTask
-title: "[FEATURE] "
+about: Suggest an idea or new functionality for SoroTask
+title: 'feat: [Short Description]'
 labels: enhancement
 assignees: ''
+
 ---
 
-## Problem Statement
+## Is your feature request related to a problem?
+<!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->
 
-A clear and concise description of the problem this feature would solve. E.g. "I'm always frustrated when..."
+## Describe the solution you'd like
+<!-- A clear and concise description of what you want to happen. -->
 
-## Proposed Solution
-
-A clear and concise description of what you want to happen.
-
-## Alternatives Considered
-
-A description of any alternative solutions or features you've considered.
-
-## Component
-
-Which part of SoroTask does this affect?
-
-- [ ] Smart Contract (`/contract`)
-- [ ] Keeper Bot (`/keeper`)
-- [ ] Frontend Dashboard (`/frontend`)
-- [ ] CI/CD / DevOps
-- [ ] Documentation
-- [ ] Other
+## Describe alternatives you've considered
+<!-- A clear and concise description of any alternative solutions or features you've considered. -->
 
 ## Additional Context
-
-Add any other context, mockups, or references about the feature request here.
+<!-- Add any other context or screenshots about the feature request here. -->

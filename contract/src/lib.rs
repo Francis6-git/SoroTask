@@ -388,6 +388,41 @@ impl SoroTaskContract {
         );
     }
 
+    /// Cancels a task, refunds remaining gas, and removes it from storage.
+    pub fn cancel_task(env: Env, task_id: u64) {
+        let task_key = DataKey::Task(task_id);
+        let config: TaskConfig = env
+            .storage()
+            .persistent()
+            .get(&task_key)
+            .expect("Task not found");
+
+        // Validate: Only creator can cancel
+        config.creator.require_auth();
+
+        // Refund: Automatically withdraw all remaining gas_balance to the creator
+        if config.gas_balance > 0 {
+            if env.storage().instance().has(&DataKey::Token) {
+                let token_address: Address = env
+                    .storage()
+                    .instance()
+                    .get(&DataKey::Token)
+                    .unwrap();
+                let token_client = soroban_sdk::token::Client::new(&env, &token_address);
+                token_client.transfer(&env.current_contract_address(), &config.creator, &config.gas_balance);
+            }
+        }
+
+        // Cleanup: Remove the task from storage
+        env.storage().persistent().remove(&task_key);
+
+        // Events: TaskCancelled(u64)
+        env.events().publish(
+            (Symbol::new(&env, "TaskCancelled"), task_id),
+            config.creator.clone(),
+        );
+    }
+
     /// Returns the global gas token address.
     pub fn get_token(env: Env) -> Address {
         env.storage()
@@ -1036,6 +1071,50 @@ mod tests {
             client.get_task(&task_id).unwrap().gas_balance,
             900,
             "gas_balance should be deducted even without token initialized"
+        );
+    }
+
+    #[test]
+    fn test_cancel_task() {
+        let (env, id) = setup();
+        let client = SoroTaskContractClient::new(&env, &id);
+
+        let token_admin = Address::generate(&env);
+        let token_id = env.register_stellar_asset_contract_v2(token_admin.clone());
+        let token_address = token_id.address();
+        let token_client = soroban_sdk::token::Client::new(&env, &token_address);
+        let token_admin_client = soroban_sdk::token::StellarAssetClient::new(&env, &token_address);
+
+        client.init(&token_address);
+
+        let target = env.register_contract(None, MockTarget);
+        let mut cfg = base_config(&env, target);
+        cfg.gas_balance = 0;
+        let creator = cfg.creator.clone();
+        let task_id = client.register(&cfg);
+
+        // Mint tokens and deposit gas
+        token_admin_client.mint(&creator, &5000);
+        client.deposit_gas(&task_id, &creator, &2000);
+
+        assert_eq!(token_client.balance(&creator), 3000);
+        assert_eq!(client.get_task(&task_id).unwrap().gas_balance, 2000);
+
+        // Cancel task
+        client.cancel_task(&task_id);
+
+        // Gas should be refunded
+        assert_eq!(token_client.balance(&creator), 5000);
+
+        // Task should be removed
+        assert!(client.get_task(&task_id).is_none());
+
+        // Verify event
+        let events = env.events().all();
+        let event = events.last().unwrap();
+        assert_eq!(
+            soroban_sdk::Symbol::from_val(&env, &event.1.get(0).unwrap()),
+            soroban_sdk::Symbol::new(&env, "TaskCancelled")
         );
     }
 }

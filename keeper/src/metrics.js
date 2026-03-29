@@ -1,4 +1,5 @@
 const http = require('http');
+const promClient = require('prom-client');
 
 /**
  * Metrics store for tracking operational statistics.
@@ -103,6 +104,94 @@ class MetricsServer {
     );
     this.server = null;
     this.metrics = new Metrics();
+
+    // Initialize Prometheus registry and metrics
+    this.register = new promClient.Registry();
+    this.initPrometheusMetrics();
+  }
+
+  initPrometheusMetrics() {
+    // Counter: Total tasks checked
+    this.promTasksChecked = new promClient.Counter({
+      name: 'keeper_tasks_checked_total',
+      help: 'Total number of tasks checked for execution eligibility',
+      registers: [this.register],
+    });
+
+    // Counter: Total tasks due for execution
+    this.promTasksDue = new promClient.Counter({
+      name: 'keeper_tasks_due_total',
+      help: 'Total number of tasks that were due for execution',
+      registers: [this.register],
+    });
+
+    // Counter: Total tasks executed successfully
+    this.promTasksExecuted = new promClient.Counter({
+      name: 'keeper_tasks_executed_total',
+      help: 'Total number of tasks executed successfully',
+      registers: [this.register],
+    });
+
+    // Counter: Total tasks failed
+    this.promTasksFailed = new promClient.Counter({
+      name: 'keeper_tasks_failed_total',
+      help: 'Total number of tasks that failed during execution',
+      registers: [this.register],
+    });
+
+    // Gauge: Average fee paid in XLM
+    this.promAvgFee = new promClient.Gauge({
+      name: 'keeper_avg_fee_paid_xlm',
+      help: 'Average transaction fee paid in XLM (rolling average)',
+      registers: [this.register],
+    });
+
+    // Gauge: Last cycle duration
+    this.promCycleDuration = new promClient.Gauge({
+      name: 'keeper_last_cycle_duration_ms',
+      help: 'Duration of the last polling cycle in milliseconds',
+      registers: [this.register],
+    });
+
+    // Gauge: Low gas count
+    this.promLowGasCount = new promClient.Gauge({
+      name: 'keeper_low_gas_count',
+      help: 'Number of tasks with low gas balance',
+      registers: [this.register],
+    });
+
+    // Gauge: Keeper uptime
+    this.promUptime = new promClient.Gauge({
+      name: 'keeper_uptime_seconds',
+      help: 'Keeper service uptime in seconds',
+      registers: [this.register],
+    });
+
+    // Gauge: RPC connection status (1 = connected, 0 = disconnected)
+    this.promRpcConnected = new promClient.Gauge({
+      name: 'keeper_rpc_connected',
+      help: 'RPC connection status (1 = connected, 0 = disconnected)',
+      registers: [this.register],
+    });
+
+    // Add default metrics (process CPU, memory, etc.)
+    promClient.collectDefaultMetrics({ register: this.register });
+  }
+
+  syncPrometheusMetrics() {
+    // Sync internal metrics to Prometheus metrics
+    this.promTasksChecked.inc(0); // Initialize if not set
+    this.promTasksDue.inc(0);
+    this.promTasksExecuted.inc(0);
+    this.promTasksFailed.inc(0);
+
+    this.promAvgFee.set(this.metrics.gauges.avgFeePaidXlm);
+    this.promCycleDuration.set(this.metrics.gauges.lastCycleDurationMs);
+    this.promLowGasCount.set(this.gasMonitor.getLowGasCount());
+
+    const uptimeSeconds = Math.floor((Date.now() - this.metrics.startTime) / 1000);
+    this.promUptime.set(uptimeSeconds);
+    this.promRpcConnected.set(this.metrics.rpcConnected ? 1 : 0);
   }
 
   start() {
@@ -111,6 +200,8 @@ class MetricsServer {
         this.handleHealth(res);
       } else if (req.url === '/metrics' || req.url === '/metrics/') {
         this.handleMetrics(res);
+      } else if (req.url === '/metrics/prometheus' || req.url === '/metrics/prometheus/') {
+        this.handlePrometheusMetrics(res);
       } else {
         res.writeHead(404);
         res.end('Not Found');
@@ -124,6 +215,9 @@ class MetricsServer {
       );
       this.logger.info(
         `Metrics endpoint: http://localhost:${this.port}/metrics`,
+      );
+      this.logger.info(
+        `Prometheus endpoint: http://localhost:${this.port}/metrics/prometheus`,
       );
     });
   }
@@ -157,16 +251,51 @@ class MetricsServer {
     res.end(JSON.stringify(metricsData, null, 2));
   }
 
+  async handlePrometheusMetrics(res) {
+    try {
+      // Sync current metrics to Prometheus
+      this.syncPrometheusMetrics();
+
+      // Get Prometheus formatted metrics
+      const metrics = await this.register.metrics();
+
+      res.writeHead(200, { 'Content-Type': this.register.contentType });
+      res.end(metrics);
+    } catch (error) {
+      this.logger.error('Error generating Prometheus metrics', { error: error.message });
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Internal Server Error');
+    }
+  }
+
   updateHealth(state) {
     this.metrics.updateHealth(state);
   }
 
   increment(key, amount) {
     this.metrics.increment(key, amount);
+
+    // Update Prometheus counters
+    if (key === 'tasksCheckedTotal') {
+      this.promTasksChecked.inc(amount);
+    } else if (key === 'tasksDueTotal') {
+      this.promTasksDue.inc(amount);
+    } else if (key === 'tasksExecutedTotal') {
+      this.promTasksExecuted.inc(amount);
+    } else if (key === 'tasksFailedTotal') {
+      this.promTasksFailed.inc(amount);
+    }
   }
 
   record(key, value) {
     this.metrics.record(key, value);
+
+    // Update Prometheus gauges
+    if (key === 'avgFeePaidXlm') {
+      this.promAvgFee.set(this.metrics.gauges.avgFeePaidXlm);
+    } else if (key === 'lastCycleDurationMs') {
+      this.promCycleDuration.set(value);
+    }
   }
 
   stop() {

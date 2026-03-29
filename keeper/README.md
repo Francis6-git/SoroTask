@@ -147,6 +147,10 @@ docker compose logs -f keeper
 
 The keeper's health and metrics endpoint will be reachable at `http://localhost:3000/health`.
 
+### Prometheus Metrics
+
+Prometheus-formatted metrics are available at `http://localhost:3000/metrics/prometheus`. See [docs/prometheus-metrics.md](./docs/prometheus-metrics.md) for detailed metric descriptions and Grafana dashboard examples.
+
 ### Check Health
 
 ```bash

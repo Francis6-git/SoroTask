@@ -1,0 +1,138 @@
+{
+  "dashboard": {
+    "title": "SoroTask Keeper Monitoring",
+    "tags": ["sorotask", "keeper", "stellar"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Task Execution Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(keeper_tasks_executed_total[5m])",
+            "legendFormat": "Executed"
+          },
+          {
+            "expr": "rate(keeper_tasks_failed_total[5m])",
+            "legendFormat": "Failed"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "id": 2,
+        "title": "Task Success Rate",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "100 * (rate(keeper_tasks_executed_total[5m]) / (rate(keeper_tasks_executed_total[5m]) + rate(keeper_tasks_failed_total[5m])))",
+            "legendFormat": "Success %"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 6, "h": 8 }
+      },
+      {
+        "id": 3,
+        "title": "Service Uptime",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "keeper_uptime_seconds",
+            "legendFormat": "Uptime"
+          }
+        ],
+        "gridPos": { "x": 18, "y": 0, "w": 6, "h": 8 }
+      },
+      {
+        "id": 4,
+        "title": "Average Fee Paid (XLM)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "keeper_avg_fee_paid_xlm",
+            "legendFormat": "Avg Fee"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 5,
+        "title": "Polling Cycle Duration",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "keeper_last_cycle_duration_ms",
+            "legendFormat": "Duration (ms)"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "id": 6,
+        "title": "Low Gas Tasks",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "keeper_low_gas_count",
+            "legendFormat": "Low Gas"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 }
+      },
+      {
+        "id": 7,
+        "title": "RPC Connection Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "keeper_rpc_connected",
+            "legendFormat": "Connected"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 }
+      },
+      {
+        "id": 8,
+        "title": "Total Tasks Checked",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "keeper_tasks_checked_total",
+            "legendFormat": "Checked"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 }
+      },
+      {
+        "id": 9,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes",
+            "legendFormat": "RSS"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 }
+      },
+      {
+        "id": 10,
+        "title": "Event Loop Lag",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nodejs_eventloop_lag_seconds",
+            "legendFormat": "Lag (s)"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 }
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

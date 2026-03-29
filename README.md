@@ -3,12 +3,14 @@
 [![Keeper CI](https://github.com/SoroLabs/SoroTask/actions/workflows/keeper.yml/badge.svg)](https://github.com/SoroLabs/SoroTask/actions/workflows/keeper.yml)
 [![Rust Contract CI](https://github.com/SoroLabs/SoroTask/actions/workflows/rust.yml/badge.svg)](https://github.com/SoroLabs/SoroTask/actions/workflows/rust.yml)
 
-SoroTask is a decentralized automation marketplace on Soroban. It allows users to schedule recurring tasks (like yield harvesting) and incentivizes Keepers to execute them.
+SoroTask is a decentralized automation marketplace on Soroban. It allows users to schedule recurring tasks (like yield harvesting) and incentivizes [Keepers](GLOSSARY.md#keeper) to execute them.
+
+See the [Glossary](GLOSSARY.md) for definitions of terms used in this project.
 
 ## Project Structure
 
 - **`/contract`**: Soroban smart contract (Rust).
-  - Contains `TaskConfig` struct and core logic.
+  - Contains [`TaskConfig`](GLOSSARY.md#taskconfig) struct and core logic.
 - **`/keeper`**: Off-chain bot (Node.js).
   - Monitors the network and executes due tasks.
 - **`/frontend`**: Dashboard (Next.js + Tailwind).
@@ -53,7 +55,7 @@ flowchart TB
 
     subgraph Contract_Layer["Smart Contract Layer"]
         SoroTask["📜 SoroTask Contract\n(Soroban/Rust)"]
-        Resolver["⚖️ Resolver Contract\n(Optional Condition)"]
+        Resolver["⚖️ [Resolver](GLOSSARY.md#resolver) Contract\n(Optional Condition)"]
     end
 
     subgraph Keeper_Layer["Keeper Layer"]
@@ -131,8 +133,8 @@ sequenceDiagram
 ### Architecture Summary
 
 1. **Register**: User registers a task via Contract.
-2. **Monitor**: Keepers scan for due tasks.
-3. **Execute**: Keeper executes the task and gets rewarded.
+2. **Monitor**: [Keepers](GLOSSARY.md#keeper) scan for due tasks.
+3. **Execute**: Keeper executes the task and gets his [Incentive](GLOSSARY.md#incentive).
 
 ## Git Hooks
 

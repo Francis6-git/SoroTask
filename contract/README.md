@@ -58,6 +58,8 @@ cargo +nightly fuzz build
 
 This document explains how protocol engineers, dApp developers, and keeper operators integrate with SoroTask at a low level using Soroban RPC.
 
+See the centralized [Glossary](../GLOSSARY.md) for definitions of domain-specific terms like Keeper, Resolver, and TaskConfig.
+
 ---
 
 # Architecture Overview
@@ -67,8 +69,8 @@ SoroTask is a task automation primitive built on Soroban.
 It enables:
 
 * Scheduled contract execution
-* Conditional execution via resolver contracts
-* Whitelisted keeper execution
+* Conditional execution via [resolver](../GLOSSARY.md#resolver) contracts
+* [Keeper](../GLOSSARY.md#keeper) execution (whitelisted or public)
 * Atomic cross-contract calls
 
 Execution Model:
@@ -93,7 +95,7 @@ Keeper → SoroTask.execute()
 
 ---
 
-# TaskConfig Specification
+# [TaskConfig](../GLOSSARY.md#taskconfig) Specification
 
 ```rust
 pub struct TaskConfig {
@@ -140,7 +142,7 @@ If the target panics → entire transaction reverts.
 
 ---
 
-# Resolver Contract Requirements
+# [Resolver](../GLOSSARY.md#resolver) Contract Requirements
 
 Resolver must implement:
 

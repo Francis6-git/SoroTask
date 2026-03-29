@@ -2,6 +2,8 @@
 
 Welcome to the SoroTask Keeper network! This guide provides step-by-step instructions on how to set up and run a SoroTask Keeper bot. By running a keeper, you help ensure tasks in the SoroTask network are executed reliably and on time.
 
+See the centralized [Glossary](../GLOSSARY.md) for definitions of domain-specific terms like Keeper, Resolver, and TaskConfig.
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your machine:

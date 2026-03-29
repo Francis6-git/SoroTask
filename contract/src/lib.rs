@@ -446,6 +446,9 @@ impl SoroTaskContract {
 // ============================================================================
 
 #[cfg(test)]
+mod test_gas;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use soroban_sdk::{
